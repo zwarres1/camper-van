@@ -1,0 +1,1 @@
+Repo for "smart" camper van that has a central hub/display and collects things like water levels, power usage, and lighting controls
