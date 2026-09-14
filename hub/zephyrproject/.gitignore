@@ -3,3 +3,4 @@ tools/
 modules/
 bootloader/
 .venv/
+build/
