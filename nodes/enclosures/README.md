@@ -1,0 +1,1 @@
+directory for cad files for the different AVR enclosures
