@@ -1,7 +1,6 @@
 #!/bin/bash
-# usage: ./rebuild.sh [app_name]
 
-APP_NAME="app" # Default to 'my-app' if no arg provided
+APP_NAME="app"
 BOARD="pic32cx_sg41_cult"
 
 echo "♻️  Rebuilding $APP_NAME for $BOARD (Pristine)..."
