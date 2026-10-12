@@ -1,0 +1,68 @@
+&pinctrl {
+    sercom0_spi_default: sercom0_spi_default {
+        group1 {
+            /* 
+             * PB24 = SERCOM0 PAD0 (MOSI)
+             * PB25 = SERCOM0 PAD1 (SCK)
+             * PC25 = SERCOM0 PAD3 (MISO)
+             * The 'C' designates the specific hardware multiplexer function for SERCOMs
+             */
+            pinmux = <PB24C_SERCOM0_PAD0>,
+                     <PC25C_SERCOM0_PAD3>,
+                     <PB25C_SERCOM0_PAD1>;
+        };
+    };
+};
+
+/* Enable SERCOM0 as an SPI bus */
+&sercom0 {
+    status = "okay";
+    compatible = "microchip,sercom-g1-spi";
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    /* Atmel SPI Pin Multiplexing (Required by the SPI driver) */
+    dipo = <3>; /* Route MISO to PAD[3] (PC25) */
+    dopo = <0>; /* Route MOSI to PAD[0] (PB24) and SCK to PAD[1] (PB25) */
+    cs-gpios = <&portc 16 GPIO_ACTIVE_LOW>;
+
+    /* Define the EVE display on this bus */
+    eve_display: bt81x@0 {
+        compatible = "vnd,spi-device"; /* Placeholder until we configure the LVGL driver */
+        reg = <0>; /* This tells Zephyr to use the first (and only) CS pin defined above */
+        spi-max-frequency = <100000>; /* 8MHz is a safe, stable starting speed, TODO, can run up to 30MHz */
+    };
+};
+
+/* Disable the Ethernet MAC to prevent it from stealing PB25 (SCK) */
+&gmac {
+    status = "disabled";
+};
+
+/* 2. Define the Power Down (RST) pin so Zephyr can wake the screen */
+/ {
+    aliases {
+        eve-pd = &eve_pd_pin;
+    };
+
+    gpio_keys {
+        compatible = "gpio-keys";
+        eve_pd_pin: eve_pd {
+            /* Map the Reset (RST) to PC18 */
+            gpios = <&portc 18 GPIO_ACTIVE_LOW>;
+        };
+    };
+};
+
+/ {
+    chosen {
+        /* Feed Zephyr's LVGL integration a fake screen */
+        zephyr,display = &dummy_disp;
+    };
+
+    dummy_disp: dummy_disp {
+        compatible = "zephyr,dummy-dc";
+        width = <0x1024>;  /* Match your screen width */
+        height = <0x600>; /* Match your screen height */
+    };
+};
