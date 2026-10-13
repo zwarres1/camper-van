@@ -197,23 +197,26 @@
   #define DispPLCLKFREQ  0xD12
   #define DispPCLK2x	 0
 #elif defined (IPS_101)
-  #define DispWidth      1280L
-  #define DispHeight     800L
-  #define DispHCycle     1440L
-  #define DispHOffset    88L
-  #define DispHSync0     0L
-  #define DispHSync1     20L
-  #define DispVCycle     838L
-  #define DispVOffset    23L
-  #define DispVSync0     0L
-  #define DispVSync1     10L
-  #define DispPCLK       1
-  #define DispSwizzle    0
-  #define DispPCLKPol    1
-  #define DispCSpread    0
-  #define DispDither     0
-  #define DispPLCLKFREQ  0x8c1
-  #define DispPCLK2x	 1
+/* Riverdi 7-inch 1024x600 IPS Timings */
+#define DispWidth      1024L
+#define DispHeight     600L
+#define DispHCycle     1344L
+#define DispHOffset    160L
+#define DispHSync0     0L
+#define DispHSync1     70L
+#define DispVCycle     635L
+#define DispVOffset    23L
+#define DispVSync0     0L
+#define DispVSync1     10L
+#define DispPCLK       1
+#define DispSwizzle    0
+#define DispPCLKPol    1
+#define DispCSpread    0
+#define DispDither     1
+
+/* We bypass the advanced PLL in init, so these can be 0 */
+#define DispPLCLKFREQ  0x000
+#define DispPCLK2x     0
 #endif
 
 #endif /*_MODULES_H_*/

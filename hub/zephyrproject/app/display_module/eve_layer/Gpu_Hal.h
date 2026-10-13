@@ -165,55 +165,55 @@ typedef enum {
 /******************************************************************************/
 
 bool_t Gpu_Hal_Init(Gpu_HalInit_t *halinit);
-bool_t Gpu_Hal_Open(Gpu_Hal_Context_t *host);
-void Gpu_Hal_Close(Gpu_Hal_Context_t *host);
+bool_t Gpu_Hal_Open();
+void Gpu_Hal_Close();
 void Gpu_Hal_DeInit();
 
 /******************************************************************************/
 
-void Gpu_Hal_StartTransfer(Gpu_Hal_Context_t *host,GPU_TRANSFERDIR_T rw,uint32_t addr);
-void Gpu_Hal_StartCmdTransfer(Gpu_Hal_Context_t *host,GPU_TRANSFERDIR_T rw, uint16_t count);
-void Gpu_Hal_TransferString(Gpu_Hal_Context_t *host,const char8_t *string);
-uint8_t Gpu_Hal_Transfer8(Gpu_Hal_Context_t *host,uint8_t value);
-uint16_t Gpu_Hal_Transfer16(Gpu_Hal_Context_t *host,uint16_t value);
-uint32_t Gpu_Hal_Transfer32(Gpu_Hal_Context_t *host,uint32_t value);
-void Gpu_Hal_EndTransfer(Gpu_Hal_Context_t *host);
+void Gpu_Hal_StartTransfer(GPU_TRANSFERDIR_T rw,uint32_t addr);
+void Gpu_Hal_StartCmdTransfer(GPU_TRANSFERDIR_T rw, uint16_t count);
+void Gpu_Hal_TransferString(const char *string);
+uint8_t Gpu_Hal_Transfer8(uint8_t value);
+uint16_t Gpu_Hal_Transfer16(uint16_t value);
+uint32_t Gpu_Hal_Transfer32(uint32_t value);
+void Gpu_Hal_EndTransfer();
 
 /******************************************************************************/
 
-uint8_t  Gpu_Hal_Rd8(Gpu_Hal_Context_t *host,uint32_t addr);
-uint16_t Gpu_Hal_Rd16(Gpu_Hal_Context_t *host,uint32_t addr);
-uint32_t Gpu_Hal_Rd32(Gpu_Hal_Context_t *host,uint32_t addr);
+uint8_t  Gpu_Hal_Rd8(uint32_t addr);
+uint16_t Gpu_Hal_Rd16(uint32_t addr);
+uint32_t Gpu_Hal_Rd32(uint32_t addr);
 
 /******************************************************************************/
 
-void Gpu_Hal_Wr8(Gpu_Hal_Context_t *host,uint32_t addr, uint8_t v);
-void Gpu_Hal_Wr16(Gpu_Hal_Context_t *host,uint32_t addr, uint16_t v);
-void Gpu_Hal_Wr32(Gpu_Hal_Context_t *host,uint32_t addr, uint32_t v);
+void Gpu_Hal_Wr8(uint32_t addr, uint8_t v);
+void Gpu_Hal_Wr16(uint32_t addr, uint16_t v);
+void Gpu_Hal_Wr32(uint32_t addr, uint32_t v);
 
 /******************************************************************************/
 
-void Gpu_HostCommand(Gpu_Hal_Context_t *host,uint8_t cmd);
-void Gpu_HostCommand_Ext3(Gpu_Hal_Context_t *host,uint32_t cmd);
+void Gpu_HostCommand(uint8_t cmd);
+void Gpu_HostCommand_Ext3(uint32_t cmd);
 
 /******************************************************************************/
 
-void Gpu_Hal_Powercycle(Gpu_Hal_Context_t *host,bool_t up);
+void Gpu_Hal_Powercycle(bool_t up);
 void Gpu_Hal_Sleep(uint32_t ms);
 
 /******************************************************************************/
 
-void Gpu_Hal_WrMem(Gpu_Hal_Context_t *host,uint32_t addr, const uint8_t *buffer, uint32_t length);
-void Gpu_Hal_RdMem(Gpu_Hal_Context_t *host,uint32_t addr, uint8_t *buffer, uint32_t length);
-void Gpu_Hal_DLSwap(Gpu_Hal_Context_t *host, uint8_t DL_Swap_Type);
-void Gpu_Hal_ResetDLBuffer(Gpu_Hal_Context_t *host);
+void Gpu_Hal_WrMem(uint32_t addr, const uint8_t *buffer, uint32_t length);
+void Gpu_Hal_RdMem(uint32_t addr, uint8_t *buffer, uint32_t length);
+void Gpu_Hal_DLSwap( uint8_t DL_Swap_Type);
+void Gpu_Hal_ResetDLBuffer();
 
 /******************************************************************************/
 
-void Gpu_ClockSelect(Gpu_Hal_Context_t *host,GPU_PLL_SOURCE_T pllsource);
-void Gpu_PLL_FreqSelect(Gpu_Hal_Context_t *host,GPU_PLL_FREQ_T freq);
-void Gpu_PowerModeSwitch(Gpu_Hal_Context_t *host,GPU_POWER_MODE_T pwrmode);
-void Gpu_CoreReset(Gpu_Hal_Context_t *host);
+void Gpu_ClockSelect(GPU_PLL_SOURCE_T pllsource);
+void Gpu_PLL_FreqSelect(GPU_PLL_FREQ_T freq);
+void Gpu_PowerModeSwitch(GPU_POWER_MODE_T pwrmode);
+void Gpu_CoreReset();
 
 /******************************************************************************/
 
@@ -269,41 +269,24 @@ typedef enum {
   GPU_SPI_MISO_MOSI_IO2_IO3 = 0x4C,
 }GPU_81X_GPIO_GROUP_T;
 
-void Gpu_81X_SelectSysCLK(Gpu_Hal_Context_t *host, GPU_81X_PLL_FREQ_T freq);
-void Gpu_81X_PowerOffComponents(Gpu_Hal_Context_t *host, uint8_t val);
-void Gpu_81X_PadDriveStrength(Gpu_Hal_Context_t *host, GPU_81X_GPIO_DRIVE_STRENGTH_T strength, GPU_81X_GPIO_GROUP_T group);
-void Gpu_81X_ResetActive(Gpu_Hal_Context_t *host);
-void Gpu_81X_ResetRemoval(Gpu_Hal_Context_t *host);
-int16_t Gpu_Hal_SetSPI(Gpu_Hal_Context_t *host,GPU_SPI_NUMCHANNELS_T numchnls,GPU_SPI_NUMDUMMYBYTES numdummy);
+void Gpu_81X_SelectSysCLK( GPU_81X_PLL_FREQ_T freq);
+void Gpu_81X_PowerOffComponents( uint8_t val);
+void Gpu_81X_PadDriveStrength( GPU_81X_GPIO_DRIVE_STRENGTH_T strength, GPU_81X_GPIO_GROUP_T group);
 
 #endif /* (FT81X_ENABLE) || (BT81X_ENABLE) */
 
 /******************************************************************************/
 
-void Gpu_Hal_Updatecmdfifo(Gpu_Hal_Context_t *host,uint32_t count);
-uint16_t Gpu_Cmdfifo_Freespace(Gpu_Hal_Context_t *host);
-void Gpu_Hal_WrCmdBuf(Gpu_Hal_Context_t *host,uint8_t *buffer,uint32_t count);
-void Gpu_Hal_CheckCmdBuffer(Gpu_Hal_Context_t *host,uint32_t count);
-void Gpu_Hal_WaitCmdfifo_empty(Gpu_Hal_Context_t *host);
-void Gpu_Hal_WrCmdBuf_nowait(Gpu_Hal_Context_t *host,uint8_t *buffer,uint32_t count);
-uint8_t Gpu_Hal_WaitCmdfifo_empty_status(Gpu_Hal_Context_t *host);
-void Gpu_Hal_WaitLogo_Finish(Gpu_Hal_Context_t *host);
-void Gpu_Hal_ResetCmdFifo(Gpu_Hal_Context_t *host);
-void Gpu_Hal_WrCmd32(Gpu_Hal_Context_t *host,uint32_t cmd);
+void Gpu_Hal_WrCmdBuf(uint8_t *buffer,uint32_t count);
+void Gpu_Hal_CheckCmdBuffer(uint32_t count);
+void Gpu_Hal_WrCmdBuf_nowait(uint8_t *buffer,uint32_t count);
+void Gpu_Hal_WaitLogo_Finish();
+void Gpu_Hal_WrCmd32(uint32_t cmd);
 
 /*******************************************************************************/
 
-void Fifo_Init(Fifo_t *pFifo,uint32_t StartAddress,uint32_t Length,uint32_t HWReadRegAddress,uint32_t HWWriteRegAddress);
-void Fifo_Update(Gpu_Hal_Context_t *host,Fifo_t *pFifo);
-uint32_t Fifo_Write(Gpu_Hal_Context_t *host,Fifo_t *pFifo,uint8_t *buffer,uint32_t NumbytetoWrite);
-void Fifo_Write32(Gpu_Hal_Context_t *host,Fifo_t *pFifo,uint32_t WriteWord);
-void Fifo_WriteWait(Gpu_Hal_Context_t *host,Fifo_t *pFifo,uint8_t *buffer,uint32_t Numbyte);
-uint32_t Fifo_GetFreeSpace(Gpu_Hal_Context_t *host,Fifo_t *pFifo);
-
-/*******************************************************************************/
-
-int32_t Gpu_Hal_Dec2Ascii(char8_t *pSrc,int32_t value);
-void Gpu_ClearScreen(Gpu_Hal_Context_t *host);
+int32_t Gpu_Hal_Dec2Ascii(char *pSrc,int32_t value);
+void Gpu_ClearScreen();
 
 /*******************************************************************************/
 

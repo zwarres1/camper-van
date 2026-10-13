@@ -30,7 +30,7 @@
     eve_display: bt81x@0 {
         compatible = "vnd,spi-device"; /* Placeholder until we configure the LVGL driver */
         reg = <0>; /* This tells Zephyr to use the first (and only) CS pin defined above */
-        spi-max-frequency = <100000>; /* 8MHz is a safe, stable starting speed, TODO, can run up to 30MHz */
+        spi-max-frequency = <11000000>; /* 11MHz seems to work well, theoretically can go to 30MHz */
     };
 };
 

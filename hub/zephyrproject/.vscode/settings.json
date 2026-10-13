@@ -1,6 +1,5 @@
 {
     "git.ignoredRepositories": [
         "${workspaceFolder}/zephyr"
-    ],
-    "cmake.sourceDirectory": "/home/zach/Development/Microchip/camper-van/hub/zephyrproject/app"
+    ]
 }

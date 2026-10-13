@@ -23,7 +23,6 @@
 #define FALSE		(0)
 
 typedef char		bool_t;
-typedef char		char8_t;
 typedef unsigned char	uchar8_t;
 typedef signed char	schar8_t;
 typedef float		float_t;
@@ -57,18 +56,18 @@ typedef enum {
 
 /*****************************************************************************/
 
-bool_t platform_init (void*);
+bool_t platform_init ();
 void platform_sleep_ms (uint32_t);
 
-bool_t platform_spi_init (void*);
-void platform_spi_deinit (void*);
+bool_t platform_spi_init ();
+void platform_spi_deinit ();
 
-uchar8_t platform_spi_send_recv_byte (void*, uchar8_t, uint32_t);
-uint16_t platform_spi_send_data (void*, uchar8_t*, uint16_t, uint32_t);
-void platform_spi_recv_data (void*, uchar8_t*, uint16_t, uint32_t);
+uchar8_t platform_spi_send_recv_byte (uchar8_t, uint32_t);
+uint16_t platform_spi_send_data (uchar8_t*, uint16_t, uint32_t);
+void platform_spi_recv_data (uchar8_t*, uint16_t, uint32_t);
 
-bool_t platform_gpio_init (void*, gpio_name);
-bool_t platform_gpio_value (void*, gpio_name, gpio_val);
+bool_t platform_gpio_init (gpio_name);
+bool_t platform_gpio_value (gpio_name, gpio_val);
 
 /*****************************************************************************/
 

@@ -22,8 +22,6 @@ target_include_directories(app PRIVATE
 target_sources(app PRIVATE
     host_layer/platform.c
     eve_layer/Gpu_Hal.c
-    eve_layer/CoPro_Cmds.c
-    eve_layer/Hal_Utils.c
     app_layer/App_Common.c
 )
 

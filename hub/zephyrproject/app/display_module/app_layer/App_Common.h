@@ -30,7 +30,6 @@ Revision History:
 #define _APP_COMMON_H_
 
 #include "modules.h"
-#include "CoPro_Cmds.h"
 #include "Gpu.h"
 
 #if defined(FT80X_ENABLE)
@@ -54,26 +53,26 @@ Revision History:
 
 /******************************************************************************/
 
-void App_WrCoCmd_Buffer(Gpu_Hal_Context_t *phost,uint32_t cmd);
-void App_WrDl_Buffer(Gpu_Hal_Context_t *phost,uint32_t cmd);
-void App_WrCoStr_Buffer(Gpu_Hal_Context_t *phost,const char8_t *s);
-void App_Flush_DL_Buffer(Gpu_Hal_Context_t *phost);
-void App_Flush_Co_Buffer(Gpu_Hal_Context_t *phost);
-void App_Flush_Co_Buffer_nowait(Gpu_Hal_Context_t *phost);
+void App_WrCoCmd_Buffer(uint32_t cmd);
+void App_WrDl_Buffer(uint32_t cmd);
+void App_WrCoStr_Buffer(const char *s);
+void App_Flush_DL_Buffer();
+void App_Flush_Co_Buffer();
+void App_Flush_Co_Buffer_nowait();
 void App_Set_DlBuffer_Index(uint32_t index);
 void App_Set_CmdBuffer_Index(uint32_t index);
 
 /******************************************************************************/
 
-uint8_t App_Read_Tag(Gpu_Hal_Context_t *phost);
-uint8_t App_Touch_Update(Gpu_Hal_Context_t *phost, uint8_t *currTag, uint16_t *x, uint16_t *y);
-void App_Play_Sound(Gpu_Hal_Context_t *phost, uint8_t sound,uint8_t vol,uint8_t midi);
-void App_Calibrate_Screen(Gpu_Hal_Context_t *phost);
-void App_Show_Logo(Gpu_Hal_Context_t *phost);
+uint8_t App_Read_Tag();
+uint8_t App_Touch_Update( uint8_t *currTag, uint16_t *x, uint16_t *y);
+void App_Play_Sound( uint8_t sound,uint8_t vol,uint8_t midi);
+void App_Calibrate_Screen();
+void App_Show_Logo();
 
 /******************************************************************************/
 
-void App_Common_Init(Gpu_Hal_Context_t *phost);
-void App_Common_Close(Gpu_Hal_Context_t *phost);
+void App_Common_Init();
+void App_Common_Close();
 
 #endif /* _APP_COMMON_H_ */
