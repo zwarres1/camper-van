@@ -7,14 +7,10 @@
 extern "C" {
 #endif
 #include "Gpu_Hal.h"
-#include "platform.h"
 #include "App_Common.h"
 #ifdef __cplusplus
 }
 #endif
-
-/* 1000 msec = 1 sec */
-#define SLEEP_TIME_MS   1000
 
 /* The devicetree node identifier for the "led0" alias. */
 #define LED0_NODE DT_ALIAS(led0)

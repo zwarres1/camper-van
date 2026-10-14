@@ -70,7 +70,6 @@ void App_Common_Init() {
 	Gpu_Hal_Powercycle(TRUE);
 
 	Gpu_CoreReset();
-
 	
 	Gpu_HostCommand(GPU_EXTERNAL_OSC);
 	Gpu_Hal_Wr32(REG_FREQUENCY, 72000000);
