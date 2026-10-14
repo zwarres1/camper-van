@@ -106,12 +106,13 @@ void App_Common_Init() {
 
 	Gpu_CoreReset();
 
+	
+	Gpu_HostCommand(GPU_EXTERNAL_OSC);
+	Gpu_Hal_Wr32(REG_FREQUENCY, 72000000);
+	
 	Gpu_Hal_Sleep(100);
 	Gpu_HostCommand(GPU_ACTIVE_M);
 	Gpu_Hal_Sleep(300);
-
-	Gpu_HostCommand(GPU_INTERNAL_OSC);
-
 	/* read Register ID to check if chip ID series is correct */
 	chipid = Gpu_Hal_Rd8(REG_ID);
 	while (chipid != 0x7C) {
@@ -135,13 +136,11 @@ void App_Common_Init() {
 		}
 	}
 
-	Gpu_Hal_Wr32(REG_FREQUENCY, 72000000);
-
 	Gpu_Hal_Wr16(REG_PWM_HZ, 4000);
 	Gpu_Hal_Wr8(REG_PWM_DUTY, 30);
 
-	// Gpu_Hal_Wr16(REG_PCLK_FREQ, DispPLCLKFREQ);
-	// Gpu_Hal_Wr8(REG_PCLK_2X, DispPCLK2x);
+	Gpu_Hal_Wr16(REG_PCLK_FREQ, DispPLCLKFREQ);
+	Gpu_Hal_Wr8(REG_PCLK_2X, DispPCLK2x);
 
 	/* configuration of LCD display */
 	Gpu_Hal_Wr16(REG_HCYCLE, DispHCycle);
@@ -158,15 +157,12 @@ void App_Common_Init() {
 	Gpu_Hal_Wr16(REG_VSIZE, DispHeight);
 	Gpu_Hal_Wr16(REG_CSPREAD, DispCSpread);
 	Gpu_Hal_Wr16(REG_DITHER, DispDither);
-	
-	Gpu_ClearScreen();
-	
-	/* after this display is visible on the LCD */
-	Gpu_Hal_Wr8(REG_PCLK, 1);
 
-	// GPIO directions/backlight
-	Gpu_Hal_Wr16(REG_GPIOX_DIR, 0xFFFF);
-	Gpu_Hal_Wr16(REG_GPIOX, 0xFFFF);
+	Gpu_ClearScreen();
+	Gpu_Hal_Wr8(REG_PCLK, 2);
+
+	// Turn on the screen
+	Gpu_Hal_Wr16(REG_GPIOX, 0x8000);
 }
 
 void App_Common_Close() {

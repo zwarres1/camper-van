@@ -287,7 +287,7 @@ int32_t Gpu_Hal_Dec2Ascii (char *pSrc, int32_t value)
 
 const uint8_t DLCODE_BOOTUP[12] =
 {
-  0,255,0,2,  //GPU instruction CLEAR_COLOR_RGB
+  0,0,0,2,  //GPU instruction CLEAR_COLOR_RGB
   7,0,0,38, //GPU instruction CLEAR
   0,0,0,0,  //GPU instruction DISPLAY
 };
