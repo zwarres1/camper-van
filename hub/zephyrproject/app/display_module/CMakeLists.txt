@@ -14,13 +14,11 @@ target_include_directories(app PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/eve_layer
     ${CMAKE_CURRENT_SOURCE_DIR}/app_layer
     ${CMAKE_CURRENT_SOURCE_DIR}/riverdi_modules
-    ${CMAKE_CURRENT_SOURCE_DIR}/host_layer
 )
 
 # 4. Add Source Files (Replaces Makefile SRC)
 # We throw away the STM32 HAL and only compile the cross-platform Riverdi code.
 target_sources(app PRIVATE
-    host_layer/platform.c
     eve_layer/Gpu_Hal.c
     app_layer/App_Common.c
 )

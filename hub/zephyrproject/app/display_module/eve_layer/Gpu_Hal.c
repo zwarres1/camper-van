@@ -1,4 +1,8 @@
-#include "platform.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <string.h>
+
 #include "modules.h"
 #include "Gpu_Hal.h"
 #include "Gpu.h"
@@ -7,35 +11,31 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/spi.h>
 
-/* Must be defined in your main.cpp without the 'static' keyword */
-extern const struct spi_dt_spec eve_spi;
+/* EVE chips use SPI Mode 0 (CPOL=0, CPHA=0), MSB first */
+const struct spi_dt_spec eve_spi = SPI_DT_SPEC_GET(
+    DT_NODELABEL(eve_display), 
+    SPI_WORD_SET(8) | SPI_TRANSFER_MSB
+);
+
+/* Grabs the Power Down and chip select pins from the Devicetree alias */
+const struct gpio_dt_spec eve_pd = GPIO_DT_SPEC_GET(DT_ALIAS(eve_pd), gpios);
 
 /*****************************************************************************/
 
 bool_t Gpu_Hal_Init (Gpu_HalInit_t *halinit)
 {
-  platform_init (halinit);
   return TRUE;
 }
 
 bool_t Gpu_Hal_Open (Gpu_Hal_Context_t *host)
 {
-  bool_t ret;
+  gpio_pin_set_dt(&eve_pd, 1);
 
-  platform_gpio_init ( GPIO_CS);
-  platform_gpio_init ( GPIO_PD);
-
-  platform_gpio_value ( GPIO_PD, GPIO_HIGH);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
-
-  ret = platform_spi_init (host);
-
-  return ret;
+  return true;
 }
 
 void Gpu_Hal_Close (Gpu_Hal_Context_t *host)
 {
-  platform_spi_deinit (host);
   host->status = GPU_HAL_CLOSED;
 }
 
@@ -71,9 +71,7 @@ uint8_t Gpu_Hal_Rd8 (uint32_t addr)
   struct spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
   struct spi_buf_set rx_set = { .buffers = &rx_buf, .count = 1 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_transceive_dt(&eve_spi, &tx_set, &rx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 
   return rx[4];
 }
@@ -88,9 +86,7 @@ uint16_t Gpu_Hal_Rd16 (uint32_t addr)
   struct spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
   struct spi_buf_set rx_set = { .buffers = &rx_buf, .count = 1 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_transceive_dt(&eve_spi, &tx_set, &rx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 
   return (uint16_t)(rx[4] | (rx[5] << 8));
 }
@@ -105,9 +101,7 @@ uint32_t Gpu_Hal_Rd32 (uint32_t addr)
   struct spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
   struct spi_buf_set rx_set = { .buffers = &rx_buf, .count = 1 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_transceive_dt(&eve_spi, &tx_set, &rx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 
   return (uint32_t)(rx[4] | (rx[5] << 8) | (rx[6] << 16) | (rx[7] << 24));
 }
@@ -122,9 +116,7 @@ void Gpu_Hal_Wr8 (uint32_t addr, uint8_t v)
   struct spi_buf tx_buf = { .buf = tx, .len = 4 };
   struct spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_write_dt(&eve_spi, &tx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 }
 
 void Gpu_Hal_Wr16 (uint32_t addr, uint16_t v)
@@ -134,9 +126,7 @@ void Gpu_Hal_Wr16 (uint32_t addr, uint16_t v)
   struct spi_buf tx_buf = { .buf = tx, .len = 5 };
   struct spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_write_dt(&eve_spi, &tx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 }
 
 void Gpu_Hal_Wr32 (uint32_t addr, uint32_t v)
@@ -147,9 +137,7 @@ void Gpu_Hal_Wr32 (uint32_t addr, uint32_t v)
   struct spi_buf tx_buf = { .buf = tx, .len = 7 };
   struct spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_write_dt(&eve_spi, &tx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 }
 
 /*****************************************************************************/
@@ -168,9 +156,7 @@ void Gpu_Hal_WrMem (uint32_t addr, const uint8_t *buffer, uint32_t length)
   };
   struct spi_buf_set tx_set = { .buffers = tx_bufs, .count = 2 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_write_dt(&eve_spi, &tx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 }
 
 void Gpu_Hal_RdMem (uint32_t addr, uint8_t *buffer, uint32_t length)
@@ -189,9 +175,7 @@ void Gpu_Hal_RdMem (uint32_t addr, uint8_t *buffer, uint32_t length)
   struct spi_buf_set tx_set = { .buffers = tx_bufs, .count = 2 };
   struct spi_buf_set rx_set = { .buffers = rx_bufs, .count = 2 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_transceive_dt(&eve_spi, &tx_set, &rx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 }
 
 /*****************************************************************************/
@@ -202,9 +186,7 @@ void Gpu_HostCommand (uint8_t cmd)
   struct spi_buf tx_buf = { .buf = tx, .len = 3 };
   struct spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_write_dt(&eve_spi, &tx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 }
 
 void Gpu_HostCommand_Ext3 (uint32_t cmd)
@@ -213,9 +195,7 @@ void Gpu_HostCommand_Ext3 (uint32_t cmd)
   struct spi_buf tx_buf = { .buf = tx, .len = 3 };
   struct spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
 
-  platform_gpio_value ( GPIO_CS, GPIO_LOW);
   spi_write_dt(&eve_spi, &tx_set);
-  platform_gpio_value ( GPIO_CS, GPIO_HIGH);
 }
 
 /*****************************************************************************/
@@ -224,23 +204,23 @@ void Gpu_Hal_Powercycle (bool_t up)
 {
   if (up)
     {
-      platform_gpio_value ( GPIO_PD, GPIO_LOW);
+      gpio_pin_set_dt(&eve_pd, 0);
       Gpu_Hal_Sleep(20);
-      platform_gpio_value ( GPIO_PD, GPIO_HIGH);
+      gpio_pin_set_dt(&eve_pd, 1);
       Gpu_Hal_Sleep(20);
     }
   else
     {
-      platform_gpio_value ( GPIO_PD, GPIO_HIGH);
+      gpio_pin_set_dt(&eve_pd, 1);
       Gpu_Hal_Sleep(20);
-      platform_gpio_value ( GPIO_PD, GPIO_LOW);
+      gpio_pin_set_dt(&eve_pd, 0);
       Gpu_Hal_Sleep(20);
     }
 }
 
 void Gpu_Hal_Sleep (uint32_t ms)
 {
-  platform_sleep_ms (ms);
+  k_msleep(ms);
 }
 
 /*****************************************************************************/
