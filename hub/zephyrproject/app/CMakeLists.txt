@@ -8,3 +8,5 @@ project(
     LANGUAGES C CXX)
 
 target_sources(app PRIVATE src/main.cpp)
+
+add_subdirectory(display_module)

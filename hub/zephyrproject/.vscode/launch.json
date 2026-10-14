@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Zephyr J-Link Debug",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "jlink",
+            "cwd": "${workspaceFolder}",
+            // Path to the Zephyr compiled ELF file
+            "executable": "${workspaceFolder}/build/zephyr/zephyr.elf",
+            "device": "PIC32CX1025SG41128", 
+            "interface": "swd",
+            "runToEntryPoint": "main",
+            
+            "armToolchainPath": "${env:HOME}/zephyr-sdk-1.0.1/gnu/arm-zephyr-eabi/bin",
+            "toolchainPrefix": "arm-zephyr-eabi",
+            
+            // This enables Zephyr Thread Awareness in VS Code!
+            "serverArgs": [
+                "-rtos", "GDBServer/RTOSPlugin_Zephyr"
+            ],
+            
+            "svdFile": "${workspaceFolder}/PIC32CX1025SG41128.svd",
+
+            // Runs a VS Code task to build the project automatically before debugging
+            "preLaunchTask": "west build" 
+        }
+    ]
+}

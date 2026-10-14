@@ -2,14 +2,15 @@ manifest:
   remotes:
     - name: zephyrproject-rtos
       url-base: https://github.com/zephyrproject-rtos
+    - name: microchip
+      url-base: https://github.com/Zephyr4Microchip
 
   projects:
-    # Imports the official Zephyr OS
     - name: zephyr
-      remote: zephyrproject-rtos
-      revision: v4.4-branch
+      remote: microchip        # <-- Pull from Zephyr4Microchip
+      repo-path: zephyr        # <-- Specifically pull the Zephyr OS repo
+      revision: main           # <-- You can lock this to a specific commit hash later
       import: true
-      path: zephyr
 
   self:
     path: app
