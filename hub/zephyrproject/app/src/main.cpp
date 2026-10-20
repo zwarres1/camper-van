@@ -5,16 +5,11 @@
 
 // TODO: move this to its own file
 #include <lvgl.h>
-
 #include <Gpu.h>
 
-/* The devicetree node identifier for the "led0" alias. */
-#define LED0_NODE DT_ALIAS(led0)
-
-static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
+static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 static const struct gpio_dt_spec eve_cs = GPIO_DT_SPEC_GET(DT_ALIAS(eve_cs), gpios);
 static const struct gpio_dt_spec eve_pd = GPIO_DT_SPEC_GET(DT_ALIAS(eve_pd), gpios);
-
 /* EVE chips use SPI Mode 0 (CPOL=0, CPHA=0), MSB first */
 const struct spi_dt_spec eve_spi = SPI_DT_SPEC_GET(
     DT_NODELABEL(eve_display), 
@@ -93,9 +88,6 @@ int main(void)
         return -1; 
     }
 
-    /* Riverdi EVE init */
-    // App_Common_Init();
-
     lv_draw_eve_parameters_t params = {
         .hor_res = 1024,
         .ver_res = 600,
@@ -118,7 +110,6 @@ int main(void)
     };
     lv_init();
     lv_tick_set_cb(k_uptime_get_32);
-    //lv_draw_eve_init();
     auto disp = lv_draw_eve_display_create(&params, zephyr_spi_cb, NULL);
     lv_draw_eve_memwrite16(disp, REG_ROTATE, 0x1);
 
