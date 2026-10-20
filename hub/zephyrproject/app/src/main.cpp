@@ -109,28 +109,28 @@ int main(void)
     lv_draw_eve_parameters_t params = {
         .hor_res = 1024,
         .ver_res = 600,
-        .hcycle = 816,
-        .hoffset = 8,
+        .hcycle = 1344,
+        .hoffset = 160,
         .hsync0 = 0,
-        .hsync1 = 4,
-        .vcycle = 496,
-        .voffset = 8,
+        .hsync1 = 70,
+        .vcycle = 635,
+        .voffset = 23,
         .vsync0 = 0,
-        .vsync1 = 4,
+        .vsync1 = 10,
         .swizzle = 0,
         .pclkpol = 1,
         .cspread = 0,
-        .pclk = 3,
+        .pclk = 2,
         .has_crystal = true,
         .has_gt911 = false,
-        .backlight_pwm = 128,
+        .backlight_pwm = 30,
         .backlight_freq = 4000,
     };
     lv_init();
     lv_tick_set_cb(k_uptime_get_32);
     //lv_draw_eve_init();
     auto disp = lv_draw_eve_display_create(&params, zephyr_spi_cb, NULL);
-
+    lv_draw_eve_memwrite16(disp, REG_ROTATE, 0x1);
 
     /* Set LVGL screen background to dark grey to verify rendering */
     lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0xFF0000), 0);
@@ -139,7 +139,7 @@ int main(void)
     lv_obj_t * btn = lv_btn_create(lv_screen_active());
     lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
     lv_obj_t * label = lv_label_create(btn);
-    lv_label_set_text(label, "Water Pump");
+    lv_label_set_text(label, "Power Levels");
 
     /* Keep UI alive */
     while (1) {
