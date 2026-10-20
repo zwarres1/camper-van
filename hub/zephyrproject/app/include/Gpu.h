@@ -4,6 +4,7 @@
 #define DL_SIZE           (8*1024L) /* 8KB Display List buffer size */
 #define CMD_FIFO_SIZE     (4*1024L) /* 4KB coprocessor Fifo size */
 #define CMD_SIZE          (4)       /* 4 byte per coprocessor command of EVE */
+#define BT81X_ENABLE
 
 #if defined (BT81X_ENABLE)
 

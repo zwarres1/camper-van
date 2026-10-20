@@ -9,6 +9,9 @@ project(
 
 target_sources(app PRIVATE
     src/main.cpp
-    ${ZEPHYR_BASE}/../modules/lib/gui/lvgl/src/drivers/draw/eve/lv_draw_eve_display.c)
+    ${ZEPHYR_BASE}/../modules/lib/gui/lvgl/src/drivers/draw/eve/lv_draw_eve_display.c
+)
 
-add_subdirectory(display_module)
+target_include_directories(app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)

@@ -6,30 +6,20 @@
 // TODO: move this to its own file
 #include <lvgl.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include "Gpu_Hal.h"
-#include "App_Common.h"
-#ifdef __cplusplus
-}
-#endif
+#include <Gpu.h>
 
 /* The devicetree node identifier for the "led0" alias. */
 #define LED0_NODE DT_ALIAS(led0)
 
-/*
- * A build error on this line means your board is unsupported.
- * See the sample documentation for information on how to fix this.
- */
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(LED0_NODE, gpios);
 static const struct gpio_dt_spec eve_cs = GPIO_DT_SPEC_GET(DT_ALIAS(eve_cs), gpios);
+static const struct gpio_dt_spec eve_pd = GPIO_DT_SPEC_GET(DT_ALIAS(eve_pd), gpios);
 
-/* Define the hardware handles with C linkage */
-extern "C" {
-    extern const struct spi_dt_spec eve_spi;
-    extern const struct gpio_dt_spec eve_pd;
-}
+/* EVE chips use SPI Mode 0 (CPOL=0, CPHA=0), MSB first */
+const struct spi_dt_spec eve_spi = SPI_DT_SPEC_GET(
+    DT_NODELABEL(eve_display), 
+    SPI_WORD_SET(8) | SPI_TRANSFER_MSB
+);
 
 static void zephyr_spi_cb(lv_display_t * disp, lv_draw_eve_operation_t operation,
                   void * data, uint32_t length)
