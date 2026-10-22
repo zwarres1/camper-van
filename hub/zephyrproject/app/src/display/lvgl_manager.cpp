@@ -1,6 +1,6 @@
 #include <lvgl_manager.hpp>
 
-LVGLManager::LVGLManager() {
+void LVGLManager::build_ui() {
     lv_obj_t * screen = lv_screen_active();
     lv_obj_set_style_bg_color(screen, lv_color_hex(0x222222), 0);
 

@@ -5,7 +5,7 @@
 class LVGLManager
 {
 public:
-    LVGLManager();
+    void build_ui();
 
 private:
     /* Private widget pointers */

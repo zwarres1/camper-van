@@ -5,8 +5,6 @@
 class Display
 {
 public:
-    Display();
-
     void run();
 
 private:
