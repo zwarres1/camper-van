@@ -5,7 +5,7 @@
 
 namespace DisplayHardware
 {
-    void init(const struct gpio_dt_spec* eve_cs,
-                   const struct gpio_dt_spec* eve_pd,
-                   const struct spi_dt_spec* eve_spi);
+    void init(const gpio_dt_spec* eve_cs,
+                   const gpio_dt_spec* eve_pd,
+                   const spi_dt_spec* eve_spi);
 }

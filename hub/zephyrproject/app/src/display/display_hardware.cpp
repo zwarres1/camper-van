@@ -4,10 +4,11 @@
 #include <lvgl.h>
 #include <Gpu.h>
 
-namespace {
-    const struct gpio_dt_spec* m_eve_cs = nullptr;
-    const struct gpio_dt_spec* m_eve_pd = nullptr;
-    const struct spi_dt_spec*  m_eve_spi = nullptr;
+namespace
+{
+    const gpio_dt_spec* m_eve_cs = nullptr;
+    const gpio_dt_spec* m_eve_pd = nullptr;
+    const spi_dt_spec*  m_eve_spi = nullptr;
 
     void zephyr_spi_cb(lv_display_t * disp, lv_draw_eve_operation_t operation,
                     void * data, uint32_t length)
@@ -32,16 +33,16 @@ namespace {
             case LV_DRAW_EVE_OPERATION_SPI_SEND:
             {
                 /* `data` is the data to send */
-                struct spi_buf tx_buf = { .buf = data, .len = length };
-                struct spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
+                spi_buf tx_buf = { .buf = data, .len = length };
+                spi_buf_set tx_set = { .buffers = &tx_buf, .count = 1 };
                 spi_write_dt(m_eve_spi, &tx_set);
                 break;
             }
             case LV_DRAW_EVE_OPERATION_SPI_RECEIVE:
             {
                 /* `data` is the destination for the data */
-                const struct spi_buf rx_buf = { .buf = data, .len = length };
-                const struct spi_buf_set rx_set = { .buffers = &rx_buf, .count = 1 };
+                const spi_buf rx_buf = { .buf = data, .len = length };
+                const spi_buf_set rx_set = { .buffers = &rx_buf, .count = 1 };
                 spi_read_dt(m_eve_spi, &rx_set);
                 break;
             }
@@ -80,20 +81,16 @@ void DisplayHardware::init(const struct gpio_dt_spec* eve_cs,
     lv_init();
     lv_tick_set_cb(k_uptime_get_32);
     auto disp = lv_draw_eve_display_create(&params, zephyr_spi_cb, NULL);
-    lv_draw_eve_memwrite16(disp, REG_ROTATE, 0x1);
+    lv_draw_eve_memwrite32(disp, REG_TOUCH_MODE, 2);
+    lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_180);
+    lv_draw_eve_touch_create(disp);
 
-    /* Set LVGL screen background to dark grey to verify rendering */
-    lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0xFF0000), 0);
+    // /* Set LVGL screen background to dark grey to verify rendering */
+    // lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0xFF0000), 0);
 
-    /* Draw a test button for the camper van dashboard UI */
-    lv_obj_t * btn = lv_btn_create(lv_screen_active());
-    lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_t * label = lv_label_create(btn);
-    lv_label_set_text(label, "Power Levels2");
-
-    // TODO: make this interrupt based
-    while (1) {
-        lv_task_handler();
-        k_msleep(5);
-    }
+    // /* Draw a test button for the camper van dashboard UI */
+    // lv_obj_t * btn = lv_btn_create(lv_screen_active());
+    // lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
+    // lv_obj_t * label = lv_label_create(btn);
+    // lv_label_set_text(label, "Power Levels2");
 }

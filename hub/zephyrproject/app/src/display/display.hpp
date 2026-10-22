@@ -1,7 +1,14 @@
 #pragma once
 
+#include <lvgl_manager.hpp>
+
 class Display
 {
 public:
-    void update();
+    Display();
+
+    void run();
+
+private:
+    LVGLManager m_lvgl_manager;
 };

@@ -15,15 +15,10 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 static const struct gpio_dt_spec eve_cs = GPIO_DT_SPEC_GET(DT_ALIAS(eve_cs), gpios);
 static const struct gpio_dt_spec eve_pd = GPIO_DT_SPEC_GET(DT_ALIAS(eve_pd), gpios);
 /* EVE chips use SPI Mode 0 (CPOL=0, CPHA=0), MSB first */
-const struct spi_dt_spec eve_spi = {
-    .bus = DEVICE_DT_GET(DT_BUS(DT_NODELABEL(eve_display))),
-    .config = {
-        .frequency = DT_PROP(DT_NODELABEL(eve_display), spi_max_frequency),
-        .operation = SPI_WORD_SET(8) | SPI_TRANSFER_MSB,
-        .slave = DT_REG_ADDR(DT_NODELABEL(eve_display))
-        /* .cs is intentionally omitted because eve lvgl toggles eve_cs manually */
-    }
-};
+const struct spi_dt_spec eve_spi = SPI_DT_SPEC_GET(
+    DT_NODELABEL(eve_display), 
+    SPI_WORD_SET(8) | SPI_TRANSFER_MSB
+);
 
 int main(void)
 {
@@ -51,7 +46,6 @@ int main(void)
     /* Keep UI alive */
     while (1) {
         // TODO: put LED blink back in
-        lv_task_handler();
         k_msleep(5);
     }
 	return 0;
