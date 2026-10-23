@@ -7,6 +7,8 @@ class LVGLManager
 public:
     void build_ui();
 
+    unsigned update();
+
 private:
     /* Private widget pointers */
     lv_obj_t* m_status_box;

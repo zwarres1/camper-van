@@ -9,6 +9,7 @@ project(
 
 target_sources(app PRIVATE
     src/main.cpp
+    src/events.cpp
     ${ZEPHYR_BASE}/../modules/lib/gui/lvgl/src/drivers/draw/eve/lv_draw_eve_display.c
 )
 

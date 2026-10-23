@@ -43,6 +43,7 @@
     aliases {
         eve-pd = &eve_pd_pin;
         eve-cs = &eve_cs_pin;
+        eve-int = &eve_int_pin;
     };
 
     gpio_keys {
@@ -54,6 +55,9 @@
         eve_cs_pin: eve_cs {
             /* Map the Reset (RST) to PC18 */
             gpios = <&portc 16 GPIO_ACTIVE_HIGH>;
+        };
+        eve_int_pin: eve_int {
+            gpios = <&portc 31 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         };
     };
 };

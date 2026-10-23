@@ -23,6 +23,10 @@ void LVGLManager::build_ui() {
     lv_obj_add_event_cb(m_pump_btn, btn_event_cb, LV_EVENT_CLICKED, this);
 }
 
+unsigned LVGLManager::update() {
+    lv_task_handler();
+}
+
 /* The Static Bridge: LVGL calls this */
 void LVGLManager::btn_event_cb(lv_event_t * e) {
     /* Extract the 'this' pointer we passed in build_ui() */
@@ -36,6 +40,6 @@ void LVGLManager::btn_event_cb(lv_event_t * e) {
 void LVGLManager::toggle_pump() {
     m_pump_active = !m_pump_active;
     
-    lv_color_t new_color = m_pump_active ? lv_color_hex(0x00FF00) : lv_color_hex(0xFF0000);
+    lv_color_t new_color = m_pump_active ? lv_color_hex(0x00FF00) : lv_color_hex(0x4B0082);
     lv_obj_set_style_bg_color(m_status_box, new_color, 0);
 }

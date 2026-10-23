@@ -1,13 +1,19 @@
 #include <display_hardware.hpp>
 
+#include <events.hpp>
+
 #include <zephyr/kernel.h>
 #include <lvgl.h>
-#include <Gpu.h>
+#include <libs/FT800-FT813/EVE.h>
+//#include <Gpu.h>
+
+static struct gpio_callback eve_int_cb_data;
 
 namespace
 {
     const gpio_dt_spec* m_eve_cs = nullptr;
     const gpio_dt_spec* m_eve_pd = nullptr;
+    const gpio_dt_spec* m_eve_int = nullptr;
     const spi_dt_spec*  m_eve_spi = nullptr;
 
     void zephyr_spi_cb(lv_display_t * disp, lv_draw_eve_operation_t operation,
@@ -48,15 +54,22 @@ namespace
             }
         }
     }
+
+    /* The Hardware Interrupt: executes inside the Zephyr ISR context */
+    static void eve_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins) {
+        /* Instantly wake the display thread. Never do SPI/I2C inside this function! */
+        k_msleep(100);
+        //lv_draw_eve_memread8(lv_display_get_default(), REG_INT_FLAGS);
+        k_sem_give(&ui_wake_sem);
+    }
 }
 
-void DisplayHardware::init(const struct gpio_dt_spec* eve_cs,
-            const struct gpio_dt_spec* eve_pd,
-            const struct spi_dt_spec* eve_spi)
+void DisplayHardware::init(const EveHardware* eve_hw_ptr)
 {
-    m_eve_cs = eve_cs;
-    m_eve_pd = eve_pd;
-    m_eve_spi = eve_spi;
+    m_eve_cs = eve_hw_ptr->cs;
+    m_eve_pd = eve_hw_ptr->pd;
+    m_eve_int = eve_hw_ptr->int_pin;
+    m_eve_spi = eve_hw_ptr->spi;
 
     lv_draw_eve_parameters_t params = {
         .hor_res = 1024,
@@ -75,22 +88,41 @@ void DisplayHardware::init(const struct gpio_dt_spec* eve_cs,
         .pclk = 1,
         .has_crystal = true,
         .has_gt911 = false,
-        .backlight_pwm = 30,
+        .backlight_pwm = 20,
         .backlight_freq = 4000,
     };
+    
+    // TODO: On PCB, undo rotation, increase backlight_pwm
+    k_msleep(500);
+    
     lv_init();
     lv_tick_set_cb(k_uptime_get_32);
     auto disp = lv_draw_eve_display_create(&params, zephyr_spi_cb, NULL);
     lv_draw_eve_memwrite32(disp, REG_TOUCH_MODE, 2);
+    lv_draw_eve_memwrite32(disp, REG_INT_MASK, 0x2);
+    lv_draw_eve_memwrite32(disp, REG_INT_EN, 1);
+
+    uint32_t mask_val = lv_draw_eve_memread32(disp, 0x3020B0); // REG_INT_MASK
+    uint32_t en_val   = lv_draw_eve_memread32(disp, 0x3020AC); // REG_INT_EN
+
+    printk("EVE REG_INT_MASK: %u (Expected 255)\n", mask_val);
+    printk("EVE REG_INT_EN: %u (Expected 1)\n", en_val);
+
+    while(1) {
+        /* Reading this register tells us what the chip is trying to do.
+         * (Note: Reading it automatically clears the flags in hardware!) */
+        uint32_t flags = lv_draw_eve_memread32(disp, REG_INT_FLAGS);
+        
+        if (flags != 0) {
+            printk("EVE INT FLAGS: 0x%02X\n", flags);
+        }
+
+        k_msleep(500); 
+    }
     lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_180);
     lv_draw_eve_touch_create(disp);
 
-    // /* Set LVGL screen background to dark grey to verify rendering */
-    // lv_obj_set_style_bg_color(lv_screen_active(), lv_color_hex(0xFF0000), 0);
-
-    // /* Draw a test button for the camper van dashboard UI */
-    // lv_obj_t * btn = lv_btn_create(lv_screen_active());
-    // lv_obj_align(btn, LV_ALIGN_CENTER, 0, 0);
-    // lv_obj_t * label = lv_label_create(btn);
-    // lv_label_set_text(label, "Power Levels2");
+    /* Register the Zephyr callback */
+    gpio_init_callback(&eve_int_cb_data, eve_isr, BIT(m_eve_int->pin));
+    gpio_add_callback(m_eve_int->port, &eve_int_cb_data);
 }
