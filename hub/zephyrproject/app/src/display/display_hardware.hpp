@@ -8,4 +8,6 @@
 namespace DisplayHardware
 {
     void init(const EveHardware* eve_hw_ptr);
+
+    void clear_isr();
 }

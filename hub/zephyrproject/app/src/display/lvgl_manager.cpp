@@ -24,7 +24,7 @@ void LVGLManager::build_ui() {
 }
 
 unsigned LVGLManager::update() {
-    lv_task_handler();
+    return lv_task_handler();
 }
 
 /* The Static Bridge: LVGL calls this */

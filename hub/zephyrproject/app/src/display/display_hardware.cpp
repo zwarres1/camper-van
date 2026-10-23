@@ -5,7 +5,6 @@
 #include <zephyr/kernel.h>
 #include <lvgl.h>
 #include <libs/FT800-FT813/EVE.h>
-//#include <Gpu.h>
 
 static struct gpio_callback eve_int_cb_data;
 
@@ -57,9 +56,6 @@ namespace
 
     /* The Hardware Interrupt: executes inside the Zephyr ISR context */
     static void eve_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins) {
-        /* Instantly wake the display thread. Never do SPI/I2C inside this function! */
-        k_msleep(100);
-        //lv_draw_eve_memread8(lv_display_get_default(), REG_INT_FLAGS);
         k_sem_give(&ui_wake_sem);
     }
 }
@@ -101,28 +97,36 @@ void DisplayHardware::init(const EveHardware* eve_hw_ptr)
     lv_draw_eve_memwrite32(disp, REG_TOUCH_MODE, 2);
     lv_draw_eve_memwrite32(disp, REG_INT_MASK, 0x2);
     lv_draw_eve_memwrite32(disp, REG_INT_EN, 1);
+    lv_draw_eve_memread32(lv_display_get_default(), REG_INT_FLAGS);
 
-    uint32_t mask_val = lv_draw_eve_memread32(disp, 0x3020B0); // REG_INT_MASK
-    uint32_t en_val   = lv_draw_eve_memread32(disp, 0x3020AC); // REG_INT_EN
+    // uint32_t mask_val = lv_draw_eve_memread32(disp, 0x3020B0); // REG_INT_MASK
+    // uint32_t en_val   = lv_draw_eve_memread32(disp, 0x3020AC); // REG_INT_EN
 
-    printk("EVE REG_INT_MASK: %u (Expected 255)\n", mask_val);
-    printk("EVE REG_INT_EN: %u (Expected 1)\n", en_val);
+    // printk("EVE REG_INT_MASK: %u (Expected 255)\n", mask_val);
+    // printk("EVE REG_INT_EN: %u (Expected 1)\n", en_val);
 
-    while(1) {
-        /* Reading this register tells us what the chip is trying to do.
-         * (Note: Reading it automatically clears the flags in hardware!) */
-        uint32_t flags = lv_draw_eve_memread32(disp, REG_INT_FLAGS);
+    // while(1) {
+    //     /* Reading this register tells us what the chip is trying to do.
+    //      * (Note: Reading it automatically clears the flags in hardware!) */
+    //     uint32_t flags = lv_draw_eve_memread32(disp, REG_INT_FLAGS);
         
-        if (flags != 0) {
-            printk("EVE INT FLAGS: 0x%02X\n", flags);
-        }
+    //     if (flags != 0) {
+    //         printk("EVE INT FLAGS: 0x%02X\n", flags);
+    //     }
 
-        k_msleep(500); 
-    }
+    //     k_msleep(500); 
+    // }
     lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_180);
-    lv_draw_eve_touch_create(disp);
+    auto touch_indev = lv_draw_eve_touch_create(disp);
+    lv_indev_set_mode(touch_indev, LV_INDEV_MODE_EVENT);
+
 
     /* Register the Zephyr callback */
     gpio_init_callback(&eve_int_cb_data, eve_isr, BIT(m_eve_int->pin));
     gpio_add_callback(m_eve_int->port, &eve_int_cb_data);
+}
+
+void DisplayHardware::clear_isr()
+{
+    lv_draw_eve_memread32(lv_display_get_default(), REG_INT_FLAGS);
 }
