@@ -5,6 +5,9 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/spi.h>
 
+/* 
+* Namespace that is the entry point to launch the Display thread
+*/
 namespace DisplayThread
 {
 

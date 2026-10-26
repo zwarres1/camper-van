@@ -8,10 +8,6 @@
 #include <network_thread.hpp>
 #include <eve_hardware_struct.hpp>
 
-// TODO: move this to its own file
-#include <lvgl.h>
-//#include <Gpu.h>
-
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
 static const struct gpio_dt_spec eve_cs = GPIO_DT_SPEC_GET(DT_ALIAS(eve_cs), gpios);
 static const struct gpio_dt_spec eve_pd = GPIO_DT_SPEC_GET(DT_ALIAS(eve_pd), gpios);

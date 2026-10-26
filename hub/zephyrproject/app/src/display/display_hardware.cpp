@@ -89,37 +89,21 @@ void DisplayHardware::init(const EveHardware* eve_hw_ptr)
     };
     
     // TODO: On PCB, undo rotation, increase backlight_pwm
-    k_msleep(500);
+    // Make sure power/rst pin is held low for 50msec on startup before initialization.
+    // This is overkill but makes startup more consistent on power-on
+    k_msleep(50);
     
     lv_init();
     lv_tick_set_cb(k_uptime_get_32);
     auto disp = lv_draw_eve_display_create(&params, zephyr_spi_cb, NULL);
-    lv_draw_eve_memwrite32(disp, REG_TOUCH_MODE, 2);
-    lv_draw_eve_memwrite32(disp, REG_INT_MASK, 0x2);
-    lv_draw_eve_memwrite32(disp, REG_INT_EN, 1);
-    lv_draw_eve_memread32(lv_display_get_default(), REG_INT_FLAGS);
-
-    // uint32_t mask_val = lv_draw_eve_memread32(disp, 0x3020B0); // REG_INT_MASK
-    // uint32_t en_val   = lv_draw_eve_memread32(disp, 0x3020AC); // REG_INT_EN
-
-    // printk("EVE REG_INT_MASK: %u (Expected 255)\n", mask_val);
-    // printk("EVE REG_INT_EN: %u (Expected 1)\n", en_val);
-
-    // while(1) {
-    //     /* Reading this register tells us what the chip is trying to do.
-    //      * (Note: Reading it automatically clears the flags in hardware!) */
-    //     uint32_t flags = lv_draw_eve_memread32(disp, REG_INT_FLAGS);
-        
-    //     if (flags != 0) {
-    //         printk("EVE INT FLAGS: 0x%02X\n", flags);
-    //     }
-
-    //     k_msleep(500); 
-    // }
+    
     lv_display_set_rotation(disp, LV_DISPLAY_ROTATION_180);
     auto touch_indev = lv_draw_eve_touch_create(disp);
     lv_indev_set_mode(touch_indev, LV_INDEV_MODE_EVENT);
-
+    
+    lv_draw_eve_memwrite32(disp, REG_INT_MASK, 0x2);
+    lv_draw_eve_memwrite32(disp, REG_INT_EN, 1);
+    lv_draw_eve_memread32(lv_display_get_default(), REG_INT_FLAGS);
 
     /* Register the Zephyr callback */
     gpio_init_callback(&eve_int_cb_data, eve_isr, BIT(m_eve_int->pin));

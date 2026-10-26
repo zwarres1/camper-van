@@ -29,7 +29,7 @@
     eve_display: bt81x@0 {
         compatible = "vnd,spi-device"; /* Placeholder until we configure the LVGL driver */
         reg = <0>; /* This tells Zephyr to use the first (and only) CS pin defined above */
-        spi-max-frequency = <1000000>; /* 11MHz seems to work well, theoretically can go to 30MHz */
+        spi-max-frequency = <11000000>; /* 11MHz seems to work well, theoretically can go to 30MHz */
     };
 };
 
@@ -53,9 +53,10 @@
             gpios = <&portc 18 GPIO_ACTIVE_HIGH>;
         };
         eve_cs_pin: eve_cs {
-            /* Map the Reset (RST) to PC18 */
+            /* Map the chips select (CS) to PC16 */
             gpios = <&portc 16 GPIO_ACTIVE_HIGH>;
         };
+            /* Interrupt pin from EVE display to signal new touch on PD21 */
         eve_int_pin: eve_int {
             gpios = <&portd 21 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         };

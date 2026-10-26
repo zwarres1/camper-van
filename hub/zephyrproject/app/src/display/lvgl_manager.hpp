@@ -2,6 +2,9 @@
 
 #include <lvgl.h>
 
+/* 
+* Class that converts commands from the Display class into lvgl buttons and graphs and text
+*/
 class LVGLManager
 {
 public:

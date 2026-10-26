@@ -3,8 +3,6 @@
 #include <events.hpp>
 #include <display_hardware.hpp>
 
-#include <zephyr/kernel.h>
-
 void Display::run()
 {
     m_lvgl_manager.build_ui();
